@@ -1,7 +1,17 @@
 import { create } from 'zustand';
 
+const getInitialItems = () => {
+  try {
+    const saved = localStorage.getItem('cart-items');
+    return saved ? JSON.parse(saved) : [];
+  } catch (err) {
+    console.error('Failed to parse cart items from localStorage:', err);
+    return [];
+  }
+};
+
 export const useCartStore = create((set) => ({
-  items: [],
+  items: getInitialItems(),
 
   addItem: (product) =>
     set((state) => {
@@ -48,3 +58,12 @@ export const useCartStore = create((set) => ({
 
   clear: () => set({ items: [] }),
 }));
+
+// React bileşenleri dışından çalışan localStorage kaydetme aboneliği
+useCartStore.subscribe((state) => {
+  try {
+    localStorage.setItem('cart-items', JSON.stringify(state.items));
+  } catch (err) {
+    console.error('Failed to save cart items to localStorage:', err);
+  }
+});

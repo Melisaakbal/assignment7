@@ -3,11 +3,10 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import ProductList from './pages/ProductList';
 import ProductDetail from './pages/ProductDetail';
+import Cart from './pages/Cart';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
-
-const Placeholder = ({ title }) => <h2>{title}</h2>;
 
 export default function App() {
   return (
@@ -22,7 +21,7 @@ export default function App() {
           path="cart" 
           element={
             <ProtectedRoute>
-              <Placeholder title="Cart (Protected)" />
+              <Cart />
             </ProtectedRoute>
           } 
         />
