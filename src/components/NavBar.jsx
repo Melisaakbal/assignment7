@@ -1,10 +1,16 @@
 import { NavLink } from 'react-router-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useAuth } from '../context/AuthContext';
+import { useCartStore } from '../store/cartStore';
 
 export default function NavBar() {
   const [theme, setTheme] = useLocalStorage('app-theme', 'light');
   const { user, logoutUser } = useAuth();
+  
+  // Sadece toplam ürün adedini (primitive) seçiyoruz
+  const itemCount = useCartStore((state) =>
+    state.items.reduce((total, item) => total + item.quantity, 0)
+  );
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
@@ -23,7 +29,9 @@ export default function NavBar() {
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
         <NavLink to="/" style={({ isActive }) => ({ fontWeight: isActive ? 'bold' : 'normal', color: 'inherit' })}>Home</NavLink>
         <NavLink to="/products" style={({ isActive }) => ({ fontWeight: isActive ? 'bold' : 'normal', color: 'inherit' })}>Products</NavLink>
-        <NavLink to="/cart" style={({ isActive }) => ({ fontWeight: isActive ? 'bold' : 'normal', color: 'inherit' })}>Cart</NavLink>
+        <NavLink to="/cart" style={({ isActive }) => ({ fontWeight: isActive ? 'bold' : 'normal', color: 'inherit' })}>
+          Cart ({itemCount})
+        </NavLink>
 
         {user ? (
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginLeft: '1rem' }}>
