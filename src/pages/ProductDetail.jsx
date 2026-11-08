@@ -1,11 +1,14 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFetch } from '../hooks/useFetch';
 import { fetchProduct } from '../api/productsApi';
+import { useCartStore } from '../store/cartStore';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const addItem = useCartStore((state) => state.addItem);
+  const [addedNotice, setAddedNotice] = useState(false);
 
   const fetchProductCallback = useCallback(
     (signal) => fetchProduct(id, signal),
@@ -13,6 +16,14 @@ export default function ProductDetail() {
   );
 
   const { data: product, loading, error } = useFetch(fetchProductCallback, [id]);
+
+  const handleAddToCart = () => {
+    if (product) {
+      addItem(product);
+      setAddedNotice(true);
+      setTimeout(() => setAddedNotice(false), 2000);
+    }
+  };
 
   if (loading) return <div>Loading product details...</div>;
 
@@ -44,9 +55,18 @@ export default function ProductDetail() {
       <p>{product.description}</p>
       <h3 style={{ color: '#2a6400' }}>Price: ${product.price}</h3>
 
-      <button style={{ padding: '0.75rem 1.5rem', backgroundColor: '#0066cc', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+      <button 
+        onClick={handleAddToCart}
+        style={{ padding: '0.75rem 1.5rem', backgroundColor: '#0066cc', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+      >
         Add to Cart
       </button>
+
+      {addedNotice && (
+        <span style={{ marginLeft: '1rem', color: 'green', fontWeight: 'bold' }}>
+          Added to cart!
+        </span>
+      )}
     </div>
   );
 }
