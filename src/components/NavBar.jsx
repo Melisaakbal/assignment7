@@ -1,13 +1,12 @@
 import { NavLink } from 'react-router-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useAuth } from '../context/AuthContext';
-import { useCartStore } from '../store/cartStore';
+import { useCartStore } from '../store/cartStore.js';
 
 export default function NavBar() {
   const [theme, setTheme] = useLocalStorage('app-theme', 'light');
   const { user, logoutUser } = useAuth();
   
-  // Sadece toplam ürün adedini (primitive) seçiyoruz
   const itemCount = useCartStore((state) =>
     state.items.reduce((total, item) => total + item.quantity, 0)
   );

@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFetch } from '../hooks/useFetch';
 import { fetchProduct } from '../api/productsApi';
-import { useCartStore } from '../store/cartStore';
+import { useCartStore } from '../store/cartStore.js';
 
 export default function ProductDetail() {
   const { id } = useParams();
