@@ -1,46 +1,41 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { login } from '../api/authApi';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { loginApi } from '../api/authApi';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('240408908@ogrenci.biruni.edu.tr');
+  const [password, setPassword] = useState('demo123456');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const { loginUser } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Kullanıcının nereden yönlendirildiğini alıyoruz, yoksa anasayfaya yönlendireceğiz
-  const from = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setErrorMsg('');
 
     try {
-      const user = await login(username, password);
-      loginUser(user);
-      // Login sayfasını taranan geçmişte bırakmamak için replace: true kullanıyoruz
-      navigate(from, { replace: true });
+      const userData = await loginApi(username, password);
+      loginUser(userData);
+      navigate('/cart');
     } catch (err) {
-      setError(err.message);
+      setErrorMsg(err.message || 'Login failed. Please check credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto', padding: '1.5rem', border: '1px solid #ccc', borderRadius: '8px' }}>
-      <h2>Sign In</h2>
-      {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
+    <div style={{ maxWidth: '400px', margin: '2rem auto', padding: '1.5rem', border: '1px solid #ddd', borderRadius: '8px' }}>
+      <h2>Login</h2>
+      {errorMsg && <div style={{ color: 'red', marginBottom: '1rem' }}>{errorMsg}</div>}
       
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>Username (Student Email):</label>
+          <label style={{ display: 'block', marginBottom: '0.5rem' }}>Username / Email</label>
           <input
             type="text"
             value={username}
@@ -51,7 +46,7 @@ export default function Login() {
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '0.5rem' }}>Password:</label>
+          <label style={{ display: 'block', marginBottom: '0.5rem' }}>Password</label>
           <input
             type="password"
             value={password}
@@ -70,11 +65,11 @@ export default function Login() {
         </button>
       </form>
 
-      <p style={{ fontSize: '0.85rem', color: '#666', marginTop: '1rem' }}>
-        Demo Username: <code>240408908@ogrenci.biruni.edu.tr</code><br />
-        Demo Password: <code>demo123456</code>
-      </p>
+      <div style={{ marginTop: '1rem', fontSize: '0.85rem', color: '#666' }}>
+        <p><strong>Demo Credentials:</strong></p>
+        <p>Email: <code>240408908@ogrenci.biruni.edu.tr</code></p>
+        <p>Password: <code>demo123456</code></p>
+      </div>
     </div>
   );
 }
-s
